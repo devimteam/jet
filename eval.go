@@ -1103,7 +1103,12 @@ func (st *Runtime) evalBaseExpressionGroup(node Node) reflect.Value {
 		for i := 0; i < len(node.Ident); i++ {
 			fieldResolved := getFieldOrMethodValue(node.Ident[i], resolved)
 			if !fieldResolved.IsValid() {
-				node.errorf("there is no field or method %q in %s", node.Ident[i], getTypeString(resolved))
+				if st.set.missing == MissingZero {
+					resolved = emptyString
+					break
+				} else {
+					node.errorf("there is no field or method %q in %s", node.Ident[i], getTypeString(resolved))
+				}
 			}
 			resolved = fieldResolved
 		}
@@ -1114,7 +1119,12 @@ func (st *Runtime) evalBaseExpressionGroup(node Node) reflect.Value {
 		for i := 0; i < len(node.Field); i++ {
 			fieldValue := getFieldOrMethodValue(node.Field[i], resolved)
 			if !fieldValue.IsValid() {
-				node.errorf("there is no field or method %q in %s", node.Field[i], getTypeString(resolved))
+				if st.set.missing == MissingZero {
+					resolved = emptyString
+					break
+				} else {
+					node.errorf("there is no field or method %q in %s", node.Field[i], getTypeString(resolved))
+				}
 			}
 			resolved = fieldValue
 		}

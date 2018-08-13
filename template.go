@@ -29,6 +29,13 @@ import (
 	"text/template"
 )
 
+type MissingKey int
+
+const (
+	MissingError MissingKey = iota
+	MissingZero
+)
+
 // Set is responsible to load,invoke parse and cache templates and relations
 // every jet template is associated with one set.
 // create a set with jet.NewSet(escapeeFn) returns a pointer to the Set
@@ -43,11 +50,17 @@ type Set struct {
 	developmentMode   bool
 	leftDelim         string
 	rightDelim        string
+	missing           MissingKey
 }
 
 // SetDevelopmentMode set's development mode on/off, in development mode template will be recompiled on every run
 func (s *Set) SetDevelopmentMode(b bool) *Set {
 	s.developmentMode = b
+	return s
+}
+
+func (s *Set) MissingMode(k MissingKey) *Set {
+	s.missing = k
 	return s
 }
 
